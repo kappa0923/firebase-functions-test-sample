@@ -8,7 +8,7 @@ exports.makeLowercase = functions.firestore.document('posts/{postId}').onCreate(
   const converted = original.toLowerCase();
 
   // 変換後の文字列を非同期(Promise)で書き込み
-  return snap.ref.set({
+  return snap.ref.update({
     converted
-  }, { merge: true });
+  });
 });

@@ -1,17 +1,28 @@
 const test = require('firebase-functions-test')();
 const chai = require('chai');
-const expect = chai.expect;
-var assert = chai.assert;
+const sinon = require('sinon');
+
+const assert = chai.assert;
 
 const targetFunctions = require('../index.js');
 const wrappedFunction = test.wrap(targetFunctions.makeLowercase);
 
-const snap = test.firestore.makeDocumentSnapshot({original: 'ABCDEFG'}, 'posts/hoge');
+const setParam = { converted: 'abcdefg' };
+const setStub = sinon.stub();
 
-return assert.equal(wrappedFunction(snap), true);
+const snap = {
+  data: function () {
+    return { original: 'ABCDEFG' }
+  },
+  ref: {
+    update: setStub
+  }
+};
 
-// describe('オフラインテスト', () => {
-//   it('makeLowercaseのテスト', () => {
-//     expect(wrappedFunction(snap)).to.be.a(true);
-//   });
-// });
+setStub.withArgs(setParam).returns(true);
+
+describe('オフラインテスト', () => {
+  it('makeLowercaseのテスト', () => {
+    assert.equal(wrappedFunction(snap), true);
+  });
+});
